@@ -48,6 +48,17 @@ return [
     /**
      * Share links widget
      */
-    'share_links' => env('SHARE_LINKS', 'unknown'),
+    'share_links' => (object)[
+
+        /**
+         * Should we display share buttons on the article page?
+         */
+        'display' => (boolean) env('SHARE_LINKS_DISPLAY', true),
+
+        /**
+         * addthis.com service is used by default
+         */
+        'service' => env('SHARE_LINKS_SERVICE', 'addthis'),
+    ],
 
 ];

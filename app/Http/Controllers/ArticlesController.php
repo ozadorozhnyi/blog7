@@ -14,9 +14,9 @@ class ArticlesController extends Controller
      */
     public function index()
     {
-        $latest = Article::latest()
-            ->take(config('blog.articles')->per_page)
-            ->get();
+        $latest = Article::latest()->simplePaginate(
+            config('blog.articles')->per_page
+        );
 
         $interested = Article::latest()
             ->select('id', 'title', 'image')

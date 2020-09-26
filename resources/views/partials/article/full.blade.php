@@ -13,8 +13,8 @@
     </p>
 
     <!-- Share Links -->
-    @if ('unknown' !== ($shareLinks = config('blog.share_links')))
-        @include(sprintf("partials.share.%s", $shareLinks))    
+    @if (config('blog.share_links')->display)
+        @include(sprintf("partials.share.%s", config('blog.share_links')->service))    
     @endif
 
 </div>

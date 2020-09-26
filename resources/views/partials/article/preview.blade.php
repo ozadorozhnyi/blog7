@@ -36,8 +36,8 @@
         </div>    
     @endforeach
 
-    <!-- With Pagination -->
-    @include('partials.pagination')
+    {{ $articles->links() }}
+    
 @else
     @include('partials.alert.warning')    
 @endif
