@@ -11,12 +11,12 @@ class AppSeeder extends Seeder
      */
     public function run()
     {
-        $users = factory(App\User::class,3)->create();
+        $users = factory(App\User::class, config('blog.seed')->users)->create();
     
         echo "<< Generate a new user accounts:\n";
         $users->each(function($user) {
             echo sprintf ("-> Email: %s (%s)\n", $user->email, $user->name);
-            factory(App\Article::class, 5)->create(['user_id'=>$user->id]);
+            factory(App\Article::class, config('blog.seed')->articles)->create(['user_id'=>$user->id]);
         });
     }
 }

@@ -7,6 +7,9 @@ use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
 $factory->define(Article::class, function (Faker $faker) {
+    
+    $resolution = config('blog.image')->resolution;
+    
     return [
         'user_id' => function() {
             return factory(App\User::class)->create()->id;
@@ -14,6 +17,10 @@ $factory->define(Article::class, function (Faker $faker) {
         'title' => $faker->sentence(rand(8,11)),
         'description' => $description = $faker->realText(3800, 5),
         'preview' => Str::words($description, 120),
-        'image' => $faker->imageUrl(640, 480, 'cats', true, 'Laravel-Blog-7')
+        'image' => $faker->imageUrl(
+            $resolution->width,
+            $resolution->height,
+            'cats', true, 'Zadorozhnyi'
+        )
     ];
 });

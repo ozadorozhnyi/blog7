@@ -7,13 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Article extends Model
 {
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'articles';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -25,11 +18,8 @@ class Article extends Model
         'image',
     ];
 
-    /**
-     * Get the author (user) that owns the article.
-     */
     public function author()
     {
-        return $this->belongsTo(App\User::class);
+        return $this->belongsTo('App\User', 'user_id');
     }
 }
