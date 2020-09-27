@@ -30,3 +30,8 @@ Route::get('artmanager', 'ArtManagerController@index')->name('artmanager');
 Route::resource('articles', 'ArticlesController')->except([
     'create'
 ]);
+
+/**
+ * Search Articles by Title & Description
+ */
+Route::post('search', 'ArticlesController@search')->name('articles.search');

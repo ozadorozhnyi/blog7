@@ -39,5 +39,5 @@
     {{ $articles->links() }}
     
 @else
-    @include('partials.alert.warning')    
+    <p>No records found. Seed the database please, or add your own articles.</p>
 @endif

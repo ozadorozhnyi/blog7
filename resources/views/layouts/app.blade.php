@@ -58,6 +58,11 @@
 
             <!-- Main App Content -->
             <main class="py-4">
+
+                @error('searchTerm')
+                    <div class="container alert alert-danger">{{ $message }}</div>
+                @enderror
+
                 @yield('content')
             </main>
         </div>

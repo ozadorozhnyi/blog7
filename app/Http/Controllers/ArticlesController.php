@@ -4,14 +4,39 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use Illuminate\Http\Request;
+
 use App\Http\Requests\StoreArticle;
 use App\Http\Requests\StoreImage;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\OverSizeImage;
+use App\Http\Requests\SearchTerm;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ArticlesController extends Controller
 {
+    /**
+     * Search articles by title or description.
+     *
+     * @param  App\Http\Requests\SearchTerm  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(SearchTerm $request)
+    {
+        $validated = $request->validated();
+        
+        $matches = Article::orderBy('updated_at', 'desc')
+            ->where('title', 'LIKE', "%{$validated['searchTerm']}%")
+            ->orWhere('description', 'LIKE', "%{$validated['searchTerm']}%")
+            ->get();
+
+        return view('two-column', [
+            'articles' => $matches,
+            'searchTerm' => $validated['searchTerm'],
+            'template' => 'search'
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -43,7 +68,7 @@ class ArticlesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\StoreArticle  $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreArticle $request)
@@ -59,6 +84,14 @@ class ArticlesController extends Controller
             return redirect('artmanager')
                     ->withErrors($storeImage)
                     ->withInput();
+        }
+
+        $overSizeImage = Validator::make(
+            $request->all(), (new OverSizeImage)->rules()
+        );
+
+        if ($overSizeImage->fails()) {
+            dd("resize image");
         }
 
         /**
