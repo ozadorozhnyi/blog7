@@ -13,6 +13,9 @@ use App\Http\Requests\SearchTerm;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
+use Image;
+use Illuminate\Support\Facades\Storage;
+
 class ArticlesController extends Controller
 {
     /**
@@ -73,9 +76,10 @@ class ArticlesController extends Controller
      */
     public function store(StoreArticle $request)
     {
-
-        $article_data = $request->validated();
+        // Run a validation for the Article 
+        $articleData = $request->validated();
         
+        // and Image, uploaded with...
         $storeImage = Validator::make(
             $request->all(), (new StoreImage)->rules()
         );
@@ -86,37 +90,38 @@ class ArticlesController extends Controller
                     ->withInput();
         }
 
-        $overSizeImage = Validator::make(
-            $request->all(), (new OverSizeImage)->rules()
-        );
-
-        if ($overSizeImage->fails()) {
-            dd("resize image");
-        }
-
-        /**
-         * Create a new Article record into the articles table.
-         */
-        $article = Auth::user()->articles()->create($article_data);
+        // Create a new Article record into the articles table.
+        $article = Auth::user()->articles()->create($articleData);
         
         /**
          * Move uploaded file into the public storage.
          * First argument is skipped to allow a file name to be automatically generated.
          */
-        $uniqFileName = $request->image->store(null, 'images');
+        $uniqueFileName = $request->image->store(null, 'images');
 
-        /**
-         * Add Image record into the images table.
-         */
+        // Run a validation for the oversized images
+        $overSizeImage = Validator::make(
+            $request->all(), (new OverSizeImage)->rules()
+        );
+
+        if ($overSizeImage->fails()) {
+            // Resize to parameters specified in the configuration file
+            Image::make(Storage::disk('images')->get($uniqueFileName))
+                ->resize(
+                    config('blog.image')->resolution->width,
+                    config('blog.image')->resolution->height
+                )->save(Storage::disk('images')->path($uniqueFileName));
+        }
+
+        // Add Image record into the images table.
         $article->image()->create([
             'original' => $request->image->getClientOriginalName(),
-            'hashed' => $uniqFileName
+            'hashed' => $uniqueFileName
         ]);
         
         return redirect('artmanager')->with(
             'status', 'New article was successfully added!'
         );
-
     }
 
     /**
