@@ -4,9 +4,11 @@
         {{ $article->title }}
     </h3>
 
+    <!-- Meta Info -->
     @include('partials.article.meta-info')
 
-    <img src="{{ $article->image }}" alt="{{ $article->title }}" title="{{ $article->title }}" class="blog-post-image">
+    <!-- Image Assigned -->
+    @include('partials.article.image')
     
     <p class="blog-post-preview">
         {{ $article->description }}

@@ -20,7 +20,7 @@ class ArticlesController extends Controller
         );
 
         $interested = Article::latest()
-            ->select('id', 'title', 'image')
+            ->select('id', 'title')
             ->take(config('blog.articles')->interested)
             ->whereNotIn('id', $latest->pluck('id')->toArray())
             ->get()
@@ -78,7 +78,7 @@ class ArticlesController extends Controller
     public function show(Article $article)
     {
         $interested = Article::latest()
-            ->select('id', 'title', 'image')
+            ->select('id', 'title')
             ->take(config('blog.articles')->interested)
             ->whereNotIn('id', [$article->id])
             ->get()
@@ -131,7 +131,16 @@ class ArticlesController extends Controller
         $this->middleware('auth');
 
         if ($article->user_id === Auth::user()->id) {
+
+            /**
+             * For first: delete Image record from the database
+             * and File linked with this instance.
+             */
+            $article->image->delete();
+
+            // Delete Article instance itself
             $article->delete();
+            
             $statusMsg = 'Article was successfully deleted!';
         } else {
             $statusMsg = 'Error! You can delete only your own articles.';

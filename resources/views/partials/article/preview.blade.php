@@ -21,7 +21,7 @@
             @include('partials.article.meta-info')
 
             <!-- Image Assigned -->
-            <img src="{{ $article->image }}" alt="{{ $article->title }}" title="{{ $article->title }}" class="blog-post-image">
+            @include('partials.article.image')
             
             <!-- Short description -->
             <p class="blog-post-preview">

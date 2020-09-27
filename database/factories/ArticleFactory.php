@@ -17,10 +17,5 @@ $factory->define(Article::class, function (Faker $faker) {
         'title' => $faker->sentence(rand(8,11)),
         'description' => $description = $faker->realText(3800, 5),
         'preview' => Str::words($description, 120),
-        'image' => $faker->imageUrl(
-            $resolution->width,
-            $resolution->height,
-            'cats', true, 'Zadorozhnyi'
-        )
     ];
 });

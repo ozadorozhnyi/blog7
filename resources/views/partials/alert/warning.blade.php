@@ -1,3 +1,3 @@
 <div class="alert alert-warning" role="alert">
-    A simple warning alert—check it out!
+    No records found. Seed the database please, or add your own articles.
 </div>

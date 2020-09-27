@@ -15,11 +15,15 @@ class Article extends Model
         'user_id',
         'title',
         'preview', 'description',
-        'image',
     ];
 
     public function author()
     {
         return $this->belongsTo('App\User', 'user_id');
+    }
+
+    public function image()
+    {
+        return $this->hasOne('App\Image');
     }
 }
