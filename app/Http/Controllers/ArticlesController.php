@@ -159,20 +159,47 @@ class ArticlesController extends Controller
     {
         $this->middleware('auth');
 
-        echo __METHOD__;
-        dd($article);
+        if ($article->user_id === Auth::user()->id) {
+            return view('ArtManager.edit', [
+                'article' => $article
+            ]);
+        } else {
+            return redirect('artmanager')
+                ->with('status', 'Error! You can edit your own articles only.');
+        }
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\StoreArticle  $request
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Article $article)
+    public function update(StoreArticle $request, Article $article)
     {
         $this->middleware('auth');
+
+        // Run a validation for the Article 
+        $articleData = $request->validated();
+
+        if ($article->user_id === Auth::user()->id) {
+        
+            // Update Article with a fresh data
+            $article->title = $articleData['title'];
+            $article->preview = $articleData['preview'];
+            $article->description = $articleData['description'];
+
+            // and changes into th database
+            $article->save();
+
+            $statusMsg = 'Article information was successfully updated!';
+        } else {
+            $statusMsg = 'Error! You can edit your own articles only.';
+        }
+
+        return redirect('artmanager')
+                ->with('status', $statusMsg);
     }
 
     /**
@@ -187,20 +214,17 @@ class ArticlesController extends Controller
 
         if ($article->user_id === Auth::user()->id) {
 
-            /**
-             * For first: delete Image record from the database
-             * and File linked with this instance.
-             */
             if (isset($article->image)) {
+                // for first: try to delete file linked
                 $article->image->delete();
             }
 
-            // Delete Article instance itself
+            // then, delete from the database Article instance itself...
             $article->delete();
             
             $statusMsg = 'Article with all related information was successfully deleted!';
         } else {
-            $statusMsg = 'Error! You can delete only your own articles.';
+            $statusMsg = 'Error! You can delete your own articles only .';
         }
         
         return redirect('artmanager')->with('status', $statusMsg);
