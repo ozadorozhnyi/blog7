@@ -1,5 +1,7 @@
 @if (session('status'))
-    <div class="alert alert-success" role="alert">
-        {{ session('status') }}
-    </div>
+    <p>
+        <div id="session-alert" class="alert alert-primary" role="alert">
+            {{ session('status') }}
+        </div>
+    </p>
 @endif

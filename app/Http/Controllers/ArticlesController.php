@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ArticlesController extends Controller
 {
@@ -36,16 +37,6 @@ class ArticlesController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -53,7 +44,29 @@ class ArticlesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'title' => 'bail|required|min:10|max:255',
+            'preview' => 'bail|required|min:10',
+            'description' => 'bail|required|min:10',
+        ]);
+
+        $image = $request->validate([
+            'image' => sprintf('bail|required|file|image'),
+            'image' => sprintf("max:%d",config('blog.image')->max_file_size),
+            'image' => sprintf("mimes:%s",config('blog.image')->mime_types_allowed),
+            'image' => sprintf("dimensions:max_width=%d,max_height=%d",
+                config('blog.image')->resolution->width,
+                config('blog.image')->resolution->height
+            ),
+        ]); 
+
+        dd(
+            $request->all(),
+            $data,
+            $image
+        );
+
+
     }
 
     /**
@@ -89,7 +102,10 @@ class ArticlesController extends Controller
      */
     public function edit(Article $article)
     {
-        //
+        $this->middleware('auth');
+
+        echo __METHOD__;
+        dd($article);
     }
 
     /**
@@ -101,7 +117,7 @@ class ArticlesController extends Controller
      */
     public function update(Request $request, Article $article)
     {
-        //
+        $this->middleware('auth');
     }
 
     /**
@@ -112,6 +128,15 @@ class ArticlesController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+        $this->middleware('auth');
+
+        if ($article->user_id === Auth::user()->id) {
+            $article->delete();
+            $statusMsg = 'Article was successfully deleted!';
+        } else {
+            $statusMsg = 'Error! You can delete only your own articles.';
+        }
+        
+        return redirect('artmanager')->with('status', $statusMsg);
     }
 }

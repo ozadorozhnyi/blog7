@@ -39,6 +39,20 @@ return [
      * Image settings
      */
     'image' => (object)[
+        /**
+         * Max file size allowed, specified in bytes.
+         * 15 Mb by default.
+         */
+        'max_file_size' => (int) env('IMG_MAX_FILE_SIZE', 15728640),
+
+        /**
+         * Allowed image types.
+         */
+        'mime_types_allowed' => env('IMG_MIME_TYPES_ALLOWED', 'jpeg, jpg, png, bmp, gif'),
+        
+        /**
+         * Image resolution settings, max
+         */
         'resolution' => (object)[
             'width' => (int) env('IMG_RESOL_WEIGHT', 640),
             'height' => (int) env('IMG_RESOL_HEIGHT', 480),

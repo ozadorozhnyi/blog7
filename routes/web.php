@@ -17,4 +17,16 @@ Route::get('/', 'ArticlesController@index')->name('home');
 
 Auth::routes();
 
-Route::resource('articles', 'ArticlesController');
+/**
+ * Allows to manage own articles for the 
+ * registered and logged in users only.
+ */
+Route::get('artmanager', 'ArtManagerController@index')->name('artmanager');
+
+/**
+ * Partially resourceful controller, used to display articles list, 
+ * and page for the specified article.
+ */
+Route::resource('articles', 'ArticlesController')->except([
+    'create'
+]);

@@ -1,6 +1,6 @@
 <li class="nav-item">
-    <a class="nav-link text-success" href="#">
-        Manage Articles
+    <a href="{{ route('artmanager') }}" class="nav-link text-success" >
+        Manage My Articles
     </a>
 </li>
 <li class="nav-item dropdown">
