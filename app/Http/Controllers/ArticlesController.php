@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreArticle;
+use App\Http\Requests\StoreImage;
+use Illuminate\Support\Facades\Validator;
+
 use Illuminate\Support\Facades\Auth;
 
 class ArticlesController extends Controller
@@ -42,30 +46,43 @@ class ArticlesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreArticle $request)
     {
-        $data = $request->validate([
-            'title' => 'bail|required|min:10|max:255',
-            'preview' => 'bail|required|min:10',
-            'description' => 'bail|required|min:10',
-        ]);
 
-        $image = $request->validate([
-            'image' => sprintf('bail|required|file|image'),
-            'image' => sprintf("max:%d",config('blog.image')->max_file_size),
-            'image' => sprintf("mimes:%s",config('blog.image')->mime_types_allowed),
-            'image' => sprintf("dimensions:max_width=%d,max_height=%d",
-                config('blog.image')->resolution->width,
-                config('blog.image')->resolution->height
-            ),
-        ]); 
-
-        dd(
-            $request->all(),
-            $data,
-            $image
+        $article_data = $request->validated();
+        
+        $storeImage = Validator::make(
+            $request->all(), (new StoreImage)->rules()
         );
 
+        if ($storeImage->fails()) {
+            return redirect('artmanager')
+                    ->withErrors($storeImage)
+                    ->withInput();
+        }
+
+        /**
+         * Create a new Article record into the articles table.
+         */
+        $article = Auth::user()->articles()->create($article_data);
+        
+        /**
+         * Move uploaded file into the public storage.
+         * First argument is skipped to allow a file name to be automatically generated.
+         */
+        $uniqFileName = $request->image->store(null, 'images');
+
+        /**
+         * Add Image record into the images table.
+         */
+        $article->image()->create([
+            'original' => $request->image->getClientOriginalName(),
+            'hashed' => $uniqFileName
+        ]);
+        
+        return redirect('artmanager')->with(
+            'status', 'New article was successfully added!'
+        );
 
     }
 
@@ -136,12 +153,14 @@ class ArticlesController extends Controller
              * For first: delete Image record from the database
              * and File linked with this instance.
              */
-            $article->image->delete();
+            if (isset($article->image)) {
+                $article->image->delete();
+            }
 
             // Delete Article instance itself
             $article->delete();
             
-            $statusMsg = 'Article was successfully deleted!';
+            $statusMsg = 'Article with all related information was successfully deleted!';
         } else {
             $statusMsg = 'Error! You can delete only your own articles.';
         }

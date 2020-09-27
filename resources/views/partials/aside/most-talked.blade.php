@@ -5,7 +5,10 @@
     @foreach ($mostTalkedAbout as $article)
         <div class="mb-3" title="{{ $article->title }}">
             <a href="{{ route('articles.show', ['article'=>$article->id]) }}">
-                <img src="{{ asset("images/{$article->image->hashed}") }}" alt="{{ $article->title }}" width="280" class="mb-2">
+                @if (isset($article->image))
+                    <img src="{{ asset("images/{$article->image->hashed}") }}"
+                        alt="{{ $article->title }}" width="280" class="mb-2">    
+                @endif
                 <h6>{{ $article->title }}</h6>
             </a>
         </div>

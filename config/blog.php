@@ -6,8 +6,8 @@ return [
      * Seeder settings
      */
     'seed' => (object)[
-        'users' => (int) env('SEED_USERS_QTY', 5),
-        'articles' => (int) env('SEED_ARTICLES_PER_USER', 15),
+        'users' => (int) env('SEED_USERS_QTY', 3),
+        'articles' => (int) env('SEED_ARTICLES_PER_USER', 20),
     ],
 
     /**

@@ -20,29 +20,6 @@
         <input type="text" name="title" value="{{ old('title') }}" id="title" class="form-control" placeholder="Put article title" minlength="10" maxlength="255" required autofocus>
     </div>
 
-    <!-- Image File -->
-    <div class="form-group">
-        <label for="image">Article Image <span class="text-danger">*</span></label>
-        <div class="input-group">
-            <div class="custom-file">
-                <input type="hidden" name="MAX_FILE_SIZE" value="15728640" />
-                <input type="file" name="image" id="image" class="custom-file-input" required>
-                <label class="custom-file-label" for="image">Choose file</label>
-            </div>
-        </div>
-        <small class="form-text text-muted mb-3 font-italic" title="File requirements">
-            @php
-                $uploadConf = config('blog.image');
-                echo sprintf("Res. %dx%d px, Max: %dMb; %s only.", 
-                    $uploadConf->resolution->width,
-                    $uploadConf->resolution->height,
-                    (($uploadConf->max_file_size/1024)/1024),
-                    $uploadConf->mime_types_allowed
-                )
-            @endphp
-        </small>
-    </div>
-
     <!-- Preview -->
     <div class="form-group">
         <label for="preview">Preview Text <span class="text-danger">*</span></label>
@@ -53,6 +30,24 @@
     <div class="form-group">
         <label for="description">Article Body <span class="text-danger">*</span></label>
         <textarea name="description" id="description" class="form-control" rows="6" placeholder="Put article body" minlength="10" required>{{ old('description') }}</textarea>
+    </div>
+
+    <!-- Image File -->
+    <div class="form-group p-3 mb-3 bg-light text-dark border border-info rounded">
+        <label for="image">Article Image <span class="text-danger">*</span></label>
+        <div class="input-group">
+            <div class="custom-file">
+                <input type="hidden" name="MAX_FILE_SIZE" value="{{ config('blog.image')->max_file_size }}" />
+                <input type="file" name="image" id="image" class="custom-file-input" required>
+                <label class="custom-file-label" for="image">Choose file</label>
+            </div>
+        </div>
+        <small class="form-text text-muted mb-3 font-italic" title="File requirements">
+            {{ sprintf("Only image file is allowed with min. resolution: %dx%d", 
+                config('blog.image')->resolution->width,
+                config('blog.image')->resolution->height)
+            }}
+        </small>
     </div>
 
     <!-- Submit button -->

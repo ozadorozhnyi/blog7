@@ -5,7 +5,14 @@
 use App\Image;
 use Faker\Generator as Faker;
 
-$factory->define(Image::class, function (Faker $faker) {
+$themes = [
+    'abstract', 'animals', 'business', 'cats',
+    'city', 'food', 'nightlife', 'fashion',
+    'people','nature', 'sports','technics',
+    'transport'
+];
+
+$factory->define(Image::class, function (Faker $faker) use ($themes) {
     return [
         'article_id' => function (){
             return factory(App\Article::class)->create()->id;
@@ -14,7 +21,7 @@ $factory->define(Image::class, function (Faker $faker) {
             storage_path('app/images/articles'), 
             config('blog.image')->resolution->width, 
             config('blog.image')->resolution->height, 
-            'cats', false, true,
+            $themes[rand(0,(count($themes)-1))], false, true,
             config('app.name', 'Laravel7-Blog')
         ),
         'hashed' => $original

@@ -4,12 +4,16 @@
         My Articles ({{ $articlesQty }})
     </h3>
     <ul class="list-unstyled">
-        @foreach (Auth::user()->articles as $article)
+        @foreach (Auth::user()->articles->sortByDesc('updated_at') as $article)
             <li class="media mb-3 border-bottom">
-                <img src="{{ asset("images/{$article->image->hashed}") }}" class="mr-3" alt="{{ $article->title }}" width="64">
+                @if (isset($article->image))
+                    <img src="{{ asset("images/{$article->image->hashed}") }}" 
+                        class="mr-3" alt="{{ $article->title }}" width="64">    
+                @endif
+                
                 <div class="media-body">
                     <h6 class="my-0">
-                        <a href="{{ route('articles.show', ['article'=>$article->id]) }}" target="__blank" title="Open on the web site.">
+                        <a href="{{ route('articles.show', ['article'=>$article->id]) }}" target="_blank" title="Open on the web site.">
                             {{ $article->title }}
                         </a>
                     </h6>
